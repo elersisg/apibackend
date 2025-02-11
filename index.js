@@ -5,7 +5,7 @@ const authRouter =  require ("./src/routes/auth.js")
 
 const app = express()
 const port = 3000
-const db = "mongodb+srv://elersisg:<gabriel040805>@cluster0.i75o9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+const db = // Colocar la cadena de conexión de la base de datos
 //Middleware 
 app.use(express.json())
 app.use(authRouter)
