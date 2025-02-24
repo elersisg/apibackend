@@ -34,14 +34,42 @@ authRouter.post('/api/signup', async (req, res) =>{
 })
 
 //endpoint del login 
-
 authRouter.post('/api/signin', async (req, res) => {
-    try {
-        
-    } catch (error) {
-        
+    try{
+
+        //extrae el email y la contrasena
+
+        const{email,password} = req.body
+
+        //Investigar si el user existe
+        const findUser = await User.findOne({email})
+        if(!findUser) {
+            return res.status(400).json({msg: "Email not found"})
+        }else{
+            //determinmos si la clave proporcionada le corresponde al email
+            const isMatch = await bcrypt.compare(password, findUser.password)
+
+            if(!isMatch){
+                return res.status(400).json({error: "Incorrect password"})
+
+            }else {
+                //login al usuario 
+                const token = jwt.sign({id: findUser._id}, "passwordKey")
+
+                //extract de password because we don't want to send it back to user
+                const { password, ...userWithoutPassword } = findUser._doc
+
+                //send the response back
+                res.json({token, ...userWithoutPassword})
+
+            }
+        }
+
+    } catch (error){
+        res.status(500).json({ error: error.message })
+
+
     }
-})
-//tener en consideracion que el usuario exista, considerar el email, contrasena, que sea unico, 
+});
 
 module.exports = authRouter
